@@ -132,6 +132,10 @@ jobs:
       - name: Download all diff artifacts
         uses: actions/download-artifact@v4
         with:
+          # Filter to just diff-run* — the run also has multi-GB
+          # `*.dockerbuild` artifacts from docker/build-push-action's
+          # cache export, and pulling them all times out the download.
+          pattern: diff-run*
           path: diffs
 
       - name: Require every matrix run to be is_clean=true

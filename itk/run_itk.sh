@@ -94,6 +94,7 @@ docker run -d --name itk-service \
   -e ITK_LOG_LEVEL="$ITK_LOG_LEVEL" \
   -e ITK_ENTRYPOINT="${ITK_ENTRYPOINT:-itk_service.py}" \
   -e ITK_READINESS_TIMEOUT="${ITK_READINESS_TIMEOUT:-180}" \
+  -e ITK_MAX_WORKERS="${ITK_MAX_WORKERS:-2}" \
   -v "$A2A_GO_ROOT:/app/agents/repo" \
   -v "$ITK_DIR:/app/agents/repo/itk" \
   -v "$HOME/.cache/a2a-itk-launcher:/root/.cache/a2a-itk" \
