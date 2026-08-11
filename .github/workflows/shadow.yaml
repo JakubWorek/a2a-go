@@ -54,8 +54,9 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Fetch a2a-itk for pre-build
-        run: git clone --branch "${{ inputs.a2a_itk_revision }}" \
-             https://github.com/a2aproject/a2a-itk.git /tmp/a2a-itk-prebuild
+        run: |
+          git clone --branch "${{ inputs.a2a_itk_revision }}" \
+            https://github.com/a2aproject/a2a-itk.git /tmp/a2a-itk-prebuild
 
       - name: Pre-build itk_service with GHA layer cache
         uses: docker/build-push-action@v6
