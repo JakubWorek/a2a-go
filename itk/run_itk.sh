@@ -108,6 +108,12 @@ docker run -d --name itk-service \
 docker exec itk-service git config --system --add safe.directory /app/agents/repo
 docker exec itk-service git config --system --add safe.directory /app/agents/repo/itk
 docker exec itk-service git config --system core.multiPackIndex false
+# The launcher checks out peers into /root/.cache/a2a-itk (bind-mounted
+# from the host in the shadow workflow), which are host-owned; git in
+# the container runs as root and refuses to touch differently-owned
+# repos ("dubious ownership") — trust every path so uv-dynamic-versioning
+# and friends can run `git describe` on the checked-out peer trees.
+docker exec itk-service git config --system --add safe.directory '*'
 
 # 7. Verify service is up and send post request
 MAX_RETRIES=30
