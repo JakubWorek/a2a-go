@@ -83,11 +83,19 @@ fi
 # Run container with protobuf registration conflict set to 'warn'
 # This is necessary because the SDK v2 depends on its predecessor v0.x,
 # causing global proto registration conflicts.
+# Bind-mount the launcher's SHA-keyed checkout+build cache from the host.
+# No-op for the legacy itk_service.py leg (it doesn't touch this dir).
+# For the launcher-v2 leg, entries survive across script invocations and,
+# in CI, across shadow workflow runs via actions/cache on the host path.
+mkdir -p "$HOME/.cache/a2a-itk-launcher"
+
 docker run -d --name itk-service \
   -e GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn \
   -e ITK_LOG_LEVEL="$ITK_LOG_LEVEL" \
+  -e ITK_ENTRYPOINT="${ITK_ENTRYPOINT:-itk_service.py}" \
   -v "$A2A_GO_ROOT:/app/agents/repo" \
   -v "$ITK_DIR:/app/agents/repo/itk" \
+  -v "$HOME/.cache/a2a-itk-launcher:/root/.cache/a2a-itk" \
   $DOCKER_MOUNT_LOGS \
   -p 8000:8000 \
   itk_service
@@ -117,8 +125,11 @@ if ! curl -s http://127.0.0.1:8000/ > /dev/null; then
   exit 1
 fi
 
-SCENARIO_FILE="scenarios.json"
-if [ "${ITK_NIGHTLY_RUN^^}" = "TRUE" ]; then
+# Shadow workflow can pin a specific scenarios file via ITK_SCENARIOS_FILE
+# (needed to run the PR-tier set while still using ITK_NIGHTLY_RUN=true so
+# raw_results.json is saved for compare_results.py).
+SCENARIO_FILE="${ITK_SCENARIOS_FILE:-scenarios.json}"
+if [ -z "${ITK_SCENARIOS_FILE:-}" ] && [ "${ITK_NIGHTLY_RUN^^}" = "TRUE" ]; then
   SCENARIO_FILE="scenarios_full.json"
 fi
 
