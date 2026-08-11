@@ -27,7 +27,9 @@ cleanup() {
 trap cleanup EXIT
 
 if [ ! -d "a2a-itk" ]; then
-  git clone https://github.com/a2aproject/a2a-itk.git a2a-itk
+  # A2A_ITK_REPO_URL lets the shadow workflow point at a fork carrying
+  # unreleased fixes; defaults to upstream so nothing changes elsewhere.
+  git clone "${A2A_ITK_REPO_URL:-https://github.com/a2aproject/a2a-itk.git}" a2a-itk
 fi
 cd a2a-itk
 git fetch origin
