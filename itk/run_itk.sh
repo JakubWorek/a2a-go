@@ -93,6 +93,7 @@ docker run -d --name itk-service \
   -e GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn \
   -e ITK_LOG_LEVEL="$ITK_LOG_LEVEL" \
   -e ITK_ENTRYPOINT="${ITK_ENTRYPOINT:-itk_service.py}" \
+  -e ITK_READINESS_TIMEOUT="${ITK_READINESS_TIMEOUT:-180}" \
   -v "$A2A_GO_ROOT:/app/agents/repo" \
   -v "$ITK_DIR:/app/agents/repo/itk" \
   -v "$HOME/.cache/a2a-itk-launcher:/root/.cache/a2a-itk" \
